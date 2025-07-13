@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, request, Blueprint
+from flask import jsonify, request, Blueprint
 import cloudscraper
 scraper = cloudscraper.create_scraper()
 get_info = Blueprint('get_info', __name__)
-
 @get_info.route('/api/information_golike', methods=['POST'])
 def get_information_golike():
     auth_header = request.headers.get('Authorization')
@@ -18,6 +17,6 @@ def get_information_golike():
             "username": username,
             "coin": coin
         }
-        return jsonify({"status": 200, "data": data_extra, "message": "Xử lý xong !"}), 200
+        return jsonify({"status": 200, "data": data_extra, "message": "Login Golike Success"}), 200
     else:
         return jsonify({"message": "Authorization Golike Của Bạn Không Chính Xác"}), 400
