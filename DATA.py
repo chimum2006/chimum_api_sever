@@ -18,6 +18,6 @@ def get_information_golike():
             "username": username,
             "coin": coin
         }
-        return jsonify({"status": 200, "data": data_extra, "message": "Xử lý xong !"}), 200
+        return jsonify({"status": 200, "data": data_extra, "message": "Login Golike Success"}), 200
     else:
         return jsonify({"message": "Authorization Golike Của Bạn Không Chính Xác"}), 400
