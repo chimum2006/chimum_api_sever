@@ -7,7 +7,7 @@ app.register_blueprint(get_info)
 
 @app.route('/', methods=['GET'])
 def hello():
-    return jsonify({"message": "Xin Chào Bạn Đến Với Api !"}), 200
+    return jsonify({"message": "Chào Mừng Bạn Đến Với Api Của Chí Mum !"}), 200
 
 # if __name__ == '__main__':
 #     app.run(debug=True)
