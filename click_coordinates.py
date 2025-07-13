@@ -57,7 +57,3 @@ def find_position():
 
     except Exception as e:
         return jsonify({"message": "Lỗi tìm tọa độ (x, y) !"}), 500
-
-
-# if check not in ['click', 'preview']:
-#     return jsonify({"message": "Giá trị check không hợp lệ!"}), 400

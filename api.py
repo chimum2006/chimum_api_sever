@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request
 import os
+<<<<<<< HEAD
+=======
+from datetime import datetime
+>>>>>>> 9344488c5858abfc1e8349a5d2e7761c3dd6b56f
 from get_info_golike import get_info
 from follow_ins import follow_instagram
 from click_coordinates import click_xy
@@ -14,10 +18,17 @@ app.register_blueprint(compare)
 
 @app.route('/', methods=['GET'])
 def hello():
+<<<<<<< HEAD
 
     established_date = "13/07/2025"
     zalo_admin = "0834617174"
 
+=======
+    current_time = datetime.now().strftime("%H:%M:%S - %d/%m/%Y")
+    established_date = "13/07/2025"
+    zalo_admin = "0834617174"
+
+>>>>>>> 9344488c5858abfc1e8349a5d2e7761c3dd6b56f
     return jsonify({
         "Author": "Chí Mum",
         "admin_zalo": zalo_admin,
