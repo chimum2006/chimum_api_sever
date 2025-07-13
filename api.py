@@ -21,7 +21,6 @@ def hello():
 
     return jsonify({
         "Author": "Chí Mum",
-        "time_now": current_time,
         "admin_zalo": zalo_admin,
         "established_date": established_date,
         "message": "Welcome to API"
