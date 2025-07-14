@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, request, Blueprint
+from flask import jsonify, request, Blueprint
 import cloudscraper
 scraper = cloudscraper.create_scraper()
 get_info = Blueprint('get_info', __name__)
-
 @get_info.route('/api/information_golike', methods=['POST'])
 def get_information_golike():
     auth_header = request.headers.get('Authorization')
