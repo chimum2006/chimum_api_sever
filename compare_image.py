@@ -39,7 +39,7 @@ def compare_imsa():
         TEMPLATE_PATH = f'templates/{check}.png'  # ảnh mẫu
         img_user = decode_base64_image(data['image_base64'])
         confidence = compare_with_template(img_user, TEMPLATE_PATH)
-        THRESHOLD = 0.5
+        THRESHOLD = 0.6
         if confidence >= THRESHOLD:
             return jsonify({
                 "status": 200,
