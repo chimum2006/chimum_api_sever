@@ -4,18 +4,12 @@ from get_info_golike import get_info
 from follow_ins import follow_instagram
 from click_coordinates import click_xy
 from compare_image import compare
-from api_get_key import get_key
-from check_key import check_key
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
 app.register_blueprint(get_info)
 app.register_blueprint(follow_instagram)
 app.register_blueprint(click_xy)
 app.register_blueprint(compare)
-app.register_blueprint(get_key)
-app.register_blueprint(check_key)
 
 
 @app.route('/', methods=['GET'])

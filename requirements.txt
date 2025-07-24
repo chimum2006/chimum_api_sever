@@ -53,12 +53,6 @@ instaloader
 itsdangerous
 Jinja2
 kaitaistruct
-Kivy
-kivy-deps.angle
-kivy-deps.glew
-Kivy-Garden
-kivy_deps.sdl2
-kivymd
 limits
 MailTm
 markdown-it-py
@@ -110,7 +104,6 @@ python-slugify
 python-telegram-bot
 pytweening
 pytz
-pywin32
 PyYAML
 qrcode
 random-user-agent

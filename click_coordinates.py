@@ -4,12 +4,8 @@ import cv2
 import numpy as np
 import base64
 from io import BytesIO
-import json
-import os
-from datetime import datetime
 
 click_xy = Blueprint('click_xy', __name__)
-ACTIVATION_FILE = "activation_api.json"
 
 def decode_base64_image(b64_string):
     if ',' in b64_string:
@@ -24,50 +20,17 @@ def find_template_coords(big_img_pil, template_path):
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     return max_loc, max_val
 
-def load_activations():
-    if not os.path.exists(ACTIVATION_FILE):
-        return []
-    try:
-        with open(ACTIVATION_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except:
-        return []
-
-def save_activations(data):
-    with open(ACTIVATION_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
 @click_xy.route('/api/find_position', methods=['POST'])
 def find_position():
     data = request.json
     image_b64 = data.get('image_base64')
     check = data.get('check')
-    user_key = data.get('key')
 
-    if not data or not image_b64 or not check or not user_key:
+    if not data or not image_b64 or not check:
         return jsonify({
             "status": 401,
-            "message": "Thiếu dữ liệu (image_base64, check hoặc key)!"
+            "message": "Thiếu dữ liệu (image_base64 hoặc check)!"
         }), 400
-
-    activations = load_activations()
-    today = datetime.now().strftime("%d/%m/%Y")
-    matched = next((k for k in activations if k["key"] == user_key), None)
-
-    if not matched:
-        return jsonify({
-            "status": 401,
-            "message": "Vui lòng lấy key kích hoạt API !"
-        }), 401
-
-    if matched["created_at"] != today:
-
-        activations = [k for k in activations if k["key"] != user_key]
-        save_activations(activations)
-        return jsonify({
-            "status": 401,
-            "message": "Key hết hạn. Vui lòng lấy key kích hoạt API hôm nay !"
-        }), 403
 
     try:
         if check not in [
@@ -76,13 +39,14 @@ def find_position():
         ]:
             return jsonify({
                 "status": 401,
-                "message": "Giá trị check không hợp lệ !"
+                "message": "Giá trị check không hợp lệ!"
             }), 400
 
         TEMPLATE_PATH = f'templates/{check}.png'
         img_pil = decode_base64_image(image_b64)
         position, confidence = find_template_coords(img_pil, TEMPLATE_PATH)
         THRESHOLD = 0.5
+
         if confidence >= THRESHOLD:
             return jsonify({
                 "status": 200,
