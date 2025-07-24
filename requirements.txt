@@ -4,3 +4,4 @@ flask-cors
 numpy
 opencv-python
 Pillow
+cloudscraper
