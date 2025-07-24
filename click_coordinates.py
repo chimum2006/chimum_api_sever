@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import base64
 from io import BytesIO
+import os
 
 click_xy = Blueprint('click_xy', __name__)
 
@@ -13,12 +14,33 @@ def decode_base64_image(b64_string):
     img_data = base64.b64decode(b64_string)
     return Image.open(BytesIO(img_data))
 
-def find_template_coords(big_img_pil, template_path):
+def find_template_coords(big_img_pil, template_path, threshold=0.5):
     big = cv2.cvtColor(np.array(big_img_pil), cv2.COLOR_RGB2GRAY)
-    small = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
-    res = cv2.matchTemplate(big, small, cv2.TM_CCOEFF_NORMED)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    return max_loc, max_val
+    small_orig = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
+
+    if small_orig is None:
+        raise FileNotFoundError(f"Không tìm thấy ảnh mẫu tại {template_path}")
+
+    best_match = None
+    best_val = -1
+    best_loc = None
+
+    for scale in np.linspace(0.2, 3.0, 40)[::-1]:
+        try:
+            small = cv2.resize(small_orig, (0, 0), fx=scale, fy=scale)
+            if small.shape[0] > big.shape[0] or small.shape[1] > big.shape[1]:
+                continue
+
+            res = cv2.matchTemplate(big, small, cv2.TM_CCOEFF_NORMED)
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+            if max_val > best_val:
+                best_val = max_val
+                best_loc = max_loc
+        except Exception as e:
+            continue
+
+    return best_loc, best_val
 
 @click_xy.route('/api/find_position', methods=['POST'])
 def find_position():
@@ -33,21 +55,22 @@ def find_position():
         }), 400
 
     try:
-        if check not in [
+        ALLOWED_TEMPLATES = [
             'file', 'checknhafl', 'follow', 'comment', 'tim', 'trangchu',
             'live', 'copy_link', 'favourite', 'personal_check', 'share'
-        ]:
+        ]
+
+        if check not in ALLOWED_TEMPLATES:
             return jsonify({
                 "status": 401,
                 "message": "Giá trị check không hợp lệ!"
             }), 400
 
-        TEMPLATE_PATH = f'templates/{check}.png'
+        TEMPLATE_PATH = os.path.join('templates', f'{check}.png')
         img_pil = decode_base64_image(image_b64)
-        position, confidence = find_template_coords(img_pil, TEMPLATE_PATH)
-        THRESHOLD = 0.5
+        position, confidence = find_template_coords(img_pil, TEMPLATE_PATH, threshold=0.5)
 
-        if confidence >= THRESHOLD:
+        if confidence >= 0.5:
             return jsonify({
                 "status": 200,
                 "matched": True,
