@@ -5,7 +5,6 @@ import numpy as np
 import base64
 from io import BytesIO
 import os
-
 click_xy = Blueprint('click_xy', __name__)
 
 def decode_base64_image(b64_string):
